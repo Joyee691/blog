@@ -11,6 +11,7 @@
 
 - [Typescript: 深入 & 操作符与 extends 的区别](https://github.com/Joyee691/blog/issues/2)
 - [深入 Typescript 中的 Enums](https://github.com/Joyee691/blog/issues/4)
+- [Utility Types in TypeScript](https://github.com/Joyee691/blog/issues/6)
 
 ## 算法相关
 
