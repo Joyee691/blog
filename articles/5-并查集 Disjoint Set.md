@@ -20,7 +20,7 @@
 
 假设某个地区有 6 个部落，部落之间各自为政，看似没什么交集。
 
-![issue5-1](https://raw.githubusercontent.com/Joyee691/blog/main/assets/issue5/issue5-1.svg)
+![5-1](https://raw.githubusercontent.com/Joyee691/image-hosting/main/blog/5-1.svg)
 
 但是有一天，有个情报机关得到了一些线索：`{[1,3], [1,2], [0,5], [5,4], [2,0]}`  其中数组表示两个部落有联盟。
 
@@ -30,7 +30,7 @@
 
 首先我们需要一个数组，数组长度为部落的数量，初始值都为自己的下标，表示每个部落的老大是自己。
 
-![issue5-2](https://raw.githubusercontent.com/Joyee691/blog/main/assets/issue5/issue5-2.svg)
+![5-2](https://raw.githubusercontent.com/Joyee691/image-hosting/main/blog/5-2.svg)
 
 我们的初始化代码可以写成：
 
@@ -53,13 +53,13 @@ public:
 
 以 `[1,3]` 为例，我们可以用 `root[3] = 1` 表示部落三听令于部落一，并给部落三画一条指向向部落一的箭头：
 
-![issue5-3](https://raw.githubusercontent.com/Joyee691/blog/main/assets/issue5/issue5-3.svg)
+![5-3](https://raw.githubusercontent.com/Joyee691/image-hosting/main/blog/5-3.svg)
 
 <br />
 
 顺着上面的思路，我们把剩下的线索都安排上，可以得到如下图示：
 
-![issue5-4](https://raw.githubusercontent.com/Joyee691/blog/main/assets/issue5/issue5-4.svg)
+![5-4](https://raw.githubusercontent.com/Joyee691/image-hosting/main/blog/5-4.svg)
 
 至此，我们可以得到第一个版本的并查集代码：
 
@@ -103,13 +103,13 @@ public:
 
 如此一来图会变成这样：
 
-![issue5-5](https://raw.githubusercontent.com/Joyee691/blog/main/assets/issue5/issue5-5.svg)
+![5-5](https://raw.githubusercontent.com/Joyee691/image-hosting/main/blog/5-5.svg)
 
 <br />
 
 顺着上面的思路，最后的图会变成这样：
 
-![issue5-6](https://raw.githubusercontent.com/Joyee691/blog/main/assets/issue5/issue5-6.svg)
+![5-6](https://raw.githubusercontent.com/Joyee691/image-hosting/main/blog/5-6.svg)
 
 改进版的并查集代码如下：
 
@@ -144,7 +144,7 @@ public:
 
 我们是时候来考虑另一个例子了：
 
-![issue5-7](https://raw.githubusercontent.com/Joyee691/blog/main/assets/issue5/issue5-7.svg)
+![5-7](https://raw.githubusercontent.com/Joyee691/image-hosting/main/blog/5-7.svg)
 
 在这个例子中，我们想要把两个集合合并，会有两种方法：
 

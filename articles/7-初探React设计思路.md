@@ -440,7 +440,7 @@ const element = <h1 className='greeting' onClick={() => { }}>
 
 它的 fiber 树看起来是这个样子的（里面的数字顺便标注了 fiber tree 的遍历过程）：
 
-![issue7-1](../assets/issue7/issue7-1.jpg)
+![7-1](https://raw.githubusercontent.com/Joyee691/image-hosting/main/blog/7-1.jpg)
 
 总结一下，我们目前的 fiber 看起来大概像这样：
 
@@ -1205,7 +1205,7 @@ function useState(initial) {
 
 最后让我们来回顾一下从 state 变化到最终渲染到页面上的过程吧～
 
-![useState workflow](../assets/issue7/issue7-2.svg)
+![7-2](https://raw.githubusercontent.com/Joyee691/image-hosting/main/blog/7-2.svg)
 
 完结撒花🎉
 
