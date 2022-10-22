@@ -9,7 +9,7 @@
 
 ## Typescript 相关
 
-- [Typescript: 深入 & 操作符与 extends 的区别](./articles/2-Typescript 深入 & 操作符与 extends 的区别.md)
+- [Typescript: 深入 & 操作符与 extends 的区别](./articles/2-Typescript深入&操作符与extends的区别.md)
 - [深入 Typescript 中的 Enums](https://github.com/Joyee691/blog/blob/main/articles/4-%E6%B7%B1%E5%85%A5%20Typescript%20%E4%B8%AD%E7%9A%84%20Enums.md)
 - [Utility Types in TypeScript](https://github.com/Joyee691/blog/blob/main/articles/6-Utility_Types_in_TypeScript.md)
 
