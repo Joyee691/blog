@@ -882,18 +882,133 @@ function Page() {
 
 #### Context 多余渲染问题
 
+> 这一节我们来讨论一下 context 在什么时候会存在多余渲染以及避免多余渲染的三种方式
 
+首先我们先从一个例子入手：
 
+```jsx
+const Context = react.createContext({});
 
+function Parent() {
+  const [value, setValue] = useState({
+    a: 1, b: 1
+  })
+  return (
+    <Context.Provider value={value}>
+      <button onClick={() => setValue(prev => { return { ...prev, b: prev.b + 1 } })}>hit me!</button>
+      <Child />
+    </Context.Provider >
+  )
+}
 
-TODO：
+const Child = react.memo(() => {
+  const { a } = useContext(Context);
+  return (
+    <VeryExpensiveTree value={a}>
+  )
+})
+```
 
-- [x] context 是什么
+我们可以看到 `Child` 组件消费了 context 中的属性 a，而 `Parent` 组件提供了一个按钮可以更新 context 中的属性 b，在按下按钮更新的过程中，除了组件 `Parent` 触发重渲染之外，组件 `Child` 也触发了一次重渲染（react.memo 在这个 case 不生效）
 
-- [x] [React.createContext](https://reactjs.org/docs/context.html#reactcreatecontext)
+从上述例子可以看到，组件 `Child` 每次重渲染都需要很昂贵的计算，这些多余的渲染明显造成了严重的性能损耗，这就是我所想要讨论的多余渲染问题
 
-- [x] 避免层层传递 props 的优雅方法——https://reactjs.org/docs/composition-vs-inheritance.html
+关于这个问题，有三种解决思路：
 
-- [ ] context 的多余渲染问题
+##### 拆分 context（推荐）
 
-- [ ] 解决 context 引发多余渲染的方法（如何合理使用 context）——https://github.com/facebook/react/issues/15156#issuecomment-474590693
+这种方法简单粗暴，如果一个 context 中耦合了太多的数据，我们直接把他们拆开成不同的 context 就完事了，比如说：
+
+```jsx
+const Context1 = react.createContext();
+const Context2 = react.createContext();
+
+function Parent() {
+  const [value1, setValue1] = useState(1)
+  const [value2, setValue2] = useState(1)
+  return (
+    <Context1.Provider value={value1}>
+      <Context2.Provider value={value2}>
+        <button onClick={() => setValue2(prev => prev + 1)}>hit me!</button>
+        <Child />
+      </Context2.Provider>
+    </Context1.Provider>
+
+  )
+}
+
+const Child = react.memo(() => {
+  const value = useContext(Context1);
+  return (
+    <VeryExpensiveTree value={value}>
+  )
+})
+```
+
+在这个 case 里，`Child` 组件使用的 context 没有被更改，而且因为使用了 react.memo，从而 “屏蔽” 了重渲染
+
+##### 拆分组件
+
+如果我们在开发的项目对于拆开 context 有比较大的难度时，可以考虑拆分对应的组件，比如说：
+
+```jsx
+const Context = react.createContext({});
+
+function Parent() {
+  const [value, setValue] = useState({
+    a: 1, b: 1
+  })
+  return (
+    <Context.Provider value={value}>
+      <button onClick={() => setValue(prev => { return { ...prev, b: prev.b + 1 } })}>hit me!</button>
+      <Child />
+    </Context.Provider >
+  )
+}
+
+function Child() {
+  const { a } = useContext(Context);
+  return (
+    <ExpensiveTreeWrapper value={a} />
+  )
+}
+
+const ExpensiveTreeWrapper = react.memo(({ value }) => {
+  return <VeryExpensiveTree value={value} />
+})
+```
+
+从上面的例子可以看到，我们在 `VeryExpensiveTree` 组件的外面包了一层，并且将 context 用 props 的形式传给了 `VeryExpensiveTree`，通过 props，我们就可以完美的利用 memo 的机制来减少多余渲染啦
+
+##### 使用 useMemo
+
+最后，我们可以使用 useMemo 这个新的 hooks 来避免多余渲染（具体的介绍会在后面章节补充）：
+
+```jsx
+const Context = react.createContext({});
+
+function Parent() {
+  const [value, setValue] = useState({
+    a: 1, b: 1
+  })
+
+  return (
+    <Context.Provider value={value}>
+      <button onClick={() => setValue(prev => { return { ...prev, b: prev.b + 1 } })}>hit me!</button>
+      <Child />
+    </Context.Provider >
+  )
+}
+
+function Child() {
+  const { a } = useContext(Context);
+  return useMemo(() => {
+    return (
+      <VeryExpensiveTree value={a} />
+    )
+  }, [a])
+}
+```
+
+这样一来，虽然每次更新的时候仍然会执行 Child 函数，但是 useMemo 里面的 `VeryExpensiveTree`  是不会触发重渲染的
+
