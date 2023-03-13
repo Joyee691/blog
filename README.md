@@ -23,5 +23,5 @@
 
 ## 基础相关
 
-- [Computer Network](./articles/9-Computer Network.md)
+- [Computer Network](./articles/9-Computer_Network.md)
 
