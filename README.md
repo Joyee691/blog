@@ -42,6 +42,7 @@
 ## 数据库学习相关
 
 - [绪论](./articles/DataBase/intro.md)
+- [关系型数据库](./articles/DataBase/relationalDB.md)
 
 ## 基础相关
 
