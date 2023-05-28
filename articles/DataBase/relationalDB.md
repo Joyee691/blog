@@ -43,7 +43,7 @@
 
 ## 关系运算符
 
-![10-1](https://raw.githubusercontent.com/Joyee691/image-hosting/main/blog/10-1.jpeg)
+![db-1](https://raw.githubusercontent.com/Joyee691/image-hosting/main/blog/db-1.jpeg)
 
 ### 并 Union
 

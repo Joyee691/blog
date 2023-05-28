@@ -44,6 +44,13 @@
 - [绪论](./articles/DataBase/intro.md)
 - [关系型数据库](./articles/DataBase/relationalDB.md)
 - [关系数据库标准语言](./articles/DataBase/SQL.md)
+- [数据库安全性](./articles/DataBase/security.md)
+- [数据库完整性](./articles/DataBase/integrality.md)
+- [关系数据库理论](./articles/DataBase/theory_of_relationalDB.md)
+- [数据库设计](./articles/DataBase/database_design.md)
+- [关系查询处理](./articles/DataBase/relational_query_design.md)
+- [数据库恢复技术](./articles/DataBase/database_recovery.md)
+- [并发控制](./articles/DataBase/concurrency.md)
 
 ## 基础相关
 
