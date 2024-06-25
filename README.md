@@ -2,6 +2,10 @@
 
 一个记录学习过程的备忘录
 
+## 面试必备
+
+- [国内前端面试八股文小册](https://github.com/Joyee691/blog/blob/main/articles/Basic/FE_interview_questions.md)
+
 ## Javascript 相关
 
 - [Javascript 中的柯里化（Currying）](./articles/Javascript/Currying_in_JS.md)
