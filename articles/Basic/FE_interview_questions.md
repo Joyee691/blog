@@ -241,7 +241,7 @@ Function.prototype.bind = function (context) {
 
 ### JS 的动画
 
-`requestAnimationFrame(callback)` 方法，可以按照浏览器的刷新频率来调用回调函数
+`requestAnimationFrame(callback)` 方法，可以按照浏览器的刷新频率来调用回调函数，调用时机在浏览器重绘之前
 
 这个方法会返回一个 id，开发者可以通过这个 id 调用 [`window.cancelAnimationFrame()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/cancelAnimationFrame) 来取消动画
 
@@ -331,7 +331,7 @@ document.head.appendChild(myScript);
 - 优点：嵌入页面，灵活性强
 - 缺点：不易管理、不利于SEO、增加HTTP请求
 
-## CSS/LESS/SCSS
+## CSS/LESS/SASS
 
 ### 各种布局
 
@@ -475,6 +475,10 @@ token：验证身份的令牌，一般就是用户通过账号密码登录后，
 5. 客户端每次向服务端发送请求资源的时候，都需要携带这个token 
 6. 服务端收到请求，接着去验证客户端里的 token，验证成功才会返回客户端请求的数据
 
+### 浏览器网页渲染流程
+
+![](https://atts.w3cschool.cn/attachments/image/20220926/1664174464710051.png)
+
 ## React
 
 ### useEffect 与 useLayoutEffect
@@ -483,18 +487,85 @@ token：验证身份的令牌，一般就是用户通过账号密码登录后，
 - useEffect 会在浏览器渲染结束后执行，useLayoutEffect 则是在 DOM 更新完成后，浏览器绘制之前执行。
 - 如果页面因为转台更新导致组件重复渲染导致闪动，就可以考虑使用 useLayoutEffect
 
-### React.memo、useMemo 和 useCallback
+### React hooks 优势
 
-- memo 默认情况下对负责对象做**浅层比较**，如果想控制对比过程，可以在第二个参数位置传入方法自己对比 `props(prevProps, nextProps)`
+- 代码可读性更强，原本同一块功能的代码逻辑被拆分在了不同的生命周期函数中，容易使开发者不利于维护和迭代，通过 React Hooks 可以将功能代码聚合，方便阅读维护
+- 不再需要去处理复杂的 this 指向问题，绑定事件
+- 所有 hooks 详细介绍见：https://github.com/Joyee691/blog/tree/main/articles/React/hooks
+
+### React 性能优化方法
+
+#### Suspense + Lazy
+
+```react
+import { lazy } from 'react';
+
+const MarkdownPreview = lazy(() => import('./MarkdownPreview.js'));
+
+<Suspense fallback={<Loading />}>
+  <h2>Preview</h2>
+  <MarkdownPreview />
+</Suspense>
+```
+
+#### PureComponent & memo
+
+- PureComponent 用于类组件，本质上是重写了 [`shouldComponentUpdate`](https://zh-hans.react.dev/reference/react/Component#shouldcomponentupdate) 方法，用来浅比较 props 和 state，如果想通则不触发更新
+- memo 用于函数组件
+  - 它会返回包裹组件的记忆化组件，这个返回的组件会在渲染前浅比较 props 是否有变化，如果没有则不会触发更新
+  - memo 的记忆化与 state 与 context 无关（这两者变更仍会触发更新）
+  - memo 的第二个参数可以用来自定义比较函数，但是需要比较性能
+
+#### useMemo 和 useCallback
 
 - useCallback：通过 useCallback 获得一个记忆后的函数，避免函数组件在每次渲染的时候如果有传递函数的话，重新渲染子组件。用来做性能优化。
 
 - useMemo：记忆组件，和 useCallback 类似，不同的是：useCallback 不会执行第一个参数函数，而是将它返回给你，而 useMemo 会执行第一个函数并且将**函数执行结果**返回给你
 
-### React hooks 优势
+#### useRef
 
-- 代码可读性更强，原本同一块功能的代码逻辑被拆分在了不同的生命周期函数中，容易使开发者不利于维护和迭代，通过 React Hooks 可以将功能代码聚合，方便阅读维护
-- 不再需要去处理复杂的 this 指向问题，绑定事件
+react 的 ref 有个特点，他可以贯穿组件的渲染周期，我们使用这个特性，可以把一些跟渲染无关的值使用 ref 来保存，这样更新的时候就不会触发渲染
+
+详情见：https://github.com/Joyee691/blog/blob/main/articles/React/hooks/useRef.md
+
+### React 中父组件调用子组件的方法
+
+#### 使用 ref 搭配 useImperativeHandle 以及 forwardRef
+
+用法：子组件将自身的方法添加到父组件使用 useRef 定义的对象中
+
+```react
+function Parent() {
+  const counterRef = useRef();
+
+  return (
+    <>
+      <button onClick={() => counterRef.current.click()}>Parent add one</button>
+      <Counter ref={counterRef} />
+    </>
+  )
+}
+
+// 加上 forwardRef
+const Counter = forwardRef((props, ref) => {
+  const [count, setCount] = useState(1);
+  return (
+    <div>
+      <div>{count}</div>
+      <button
+        ref={ref}
+        onClick={() => setCount(prev => prev + 1)}
+      >
+        Counter add one
+      </button>
+    </div>
+  );
+})
+```
+
+详情请见：https://github.com/Joyee691/blog/blob/main/articles/React/hooks/useImperativeHandle.md
+
+
 
 ## Vue
 
@@ -717,6 +788,20 @@ token：验证身份的令牌，一般就是用户通过账号密码登录后，
 - 函数返回的字符串说明浏览器应该到哪里请求这个URL
 - 返回字符串可以是代理名称列表或者“DIRECT"字符串表示直接链接原始伺服器
 
+### 网络劫持有哪几种，如何防范？
+
+网络劫持分为两种：
+
+-  DNS劫持：（输入京东被强制跳转到淘宝这就属于dns劫持）
+
+  - ﻿DNS强制解析：通过修改运营商的本地DNS记录，来引导用户流量到缓存服务器
+
+  - ﻿﻿302跳转的方式：通过监控网络出口的流量，分析判断哪些内容是可以进行劫持处理的，再对劫持的内存发起302跳转的回复，引导用户获取内容
+  - DNS劫持由于涉嫌违法，已经被监管起来，现在很少会有DNS劫持
+
+- HTTP劫持：（访问谷歌但是一直有贪玩蓝月的广告），由于http明文传输，运营商会修改你的http响应内容（即加广告）
+  - 解决方法：全站HTTPS
+
 ## Frontend engineering
 
 ### 性能优化
@@ -794,3 +879,9 @@ token：验证身份的令牌，一般就是用户通过账号密码登录后，
 
 ## Algorithm
 
+
+
+## Q
+
+1. 这个部门主要是做什么的？规模多大？
+2. 这个岗位的 hc 之后会负责哪一个部分的工作呢？有哪些技术栈？挑战在哪里？
