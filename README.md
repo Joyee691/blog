@@ -10,6 +10,7 @@
 
 - [Javascript 中的柯里化（Currying）](./articles/Javascript/Currying_in_JS.md)
 - [深入 ES6 的块级作用域与声明提升](./articles/Javascript/深入ES6的块级作用域与声明提升.md)
+- [JS 的模块化之路](./articles/Javascript/Path_to_js_modularity.md)
 
 ## Typescript 相关
 
