@@ -280,6 +280,7 @@ console.log(res1 + res3); // 31
 [^3]:https://en.wikipedia.org/wiki/Partial_application
 [^4]: https://developer.mozilla.org/zh-TW/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
 [^5]:https://en.wikipedia.org/wiki/Closure_(computer_programming)
+
 [^6]:https://juejin.cn/post/6864378349512065038
 
 https://zh.javascript.info/currying-partials
