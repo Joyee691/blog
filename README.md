@@ -23,6 +23,7 @@
 
 - [并查集 Disjoint Set](./articles/Algorithm/并查集Disjoint_Set.md)
 - [JS 中的深拷贝](./articles/Algorithm/JS_deepClone.md)
+- [使用 JS 实现并发数量控制](./articles/Algorithm/Concurrent_control.md)
 
 ## React 相关
 
