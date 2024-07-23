@@ -64,4 +64,5 @@
 - [Computer Network](./articles/Basic/Computer_Network.md)
 - [Design Patterns](./articles/Basic/Design_Patterns.md)
 - [控制反转(IoC)与依赖注入(DI)](./articles/Basic/IoC_and_DI.md)
+- [HTTP Cache](./articles/Basic/HTTP_Cache.md)
 
