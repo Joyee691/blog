@@ -74,6 +74,15 @@ closure();  // Hi! joyee
   - 优点：延长变量生命周期、保持变量状态
   - 缺点：内存占用
 
+### 常见导致 JS 内存泄漏的行为
+
+- 没有及时清除的 event listener
+- 没有清理的定时器
+- 不必要的全局变量
+- 对没有使用的 DOM 的引用
+- 缓存对象过大
+- 闭包持有了不必要的引用
+
 ### 柯里化是什么
 
 一句话描述：柯里化使函数只接受第一个参数，返回其余参数到一个函数中，目的是为了参数复用
@@ -417,6 +426,11 @@ document.head.appendChild(myScript);
 - 引用计数一变 0 就会被回收，所以它可以立即回收垃圾；标记是隔一段时间得执行一下 gc 程序去标记及清除
 - 引用计数的存储的引用次数的这个值可能是很大的
 
+### GC 的标记原理
+
+- 从各个根对象出发，寻找并标记可达的变量
+- 在清除阶段，寻找没有被标记的不可达变量进行清除
+
 ## Browser(Chrome)
 
 ### 浏览器的存储方式有哪些
@@ -441,7 +455,7 @@ document.head.appendChild(myScript);
 
 <br />
 
-浏览器将CORS跨域请求分为简单请求和非简单请求。
+浏览器将 CORS 跨域请求分为简单请求和非简单请求。
 
 - 请求方式 head get post
 - header 头 content-type限于 application/x-www-form-urlencoded、multipart/form-data、text/plain
@@ -450,7 +464,7 @@ document.head.appendChild(myScript);
 
 <br />
 
-不是简单请求，会多发一个预请求，预检"请求用的请求方法是 OPTIONS，表示这个请求是用来询问的。请求头信息里面，关键字段是 Origin，表示请求来自哪个源。除了 Origin 字段，预检请求的头信息包括两个特殊字段：
+不是简单请求，会多发一个预请求，预检"请求用的请求方法是 **OPTIONS**，表示这个请求是用来询问的。请求头信息里面，关键字段是 Origin，表示请求来自哪个源。除了 Origin 字段，预检请求的头信息包括两个特殊字段：
 
 - Access-Control-Request-Method
 - Access-Control-Request-Headers
@@ -670,7 +684,7 @@ const Counter = forwardRef((props, ref) => {
 - 502：网关或代理收到无效响应
 - 504：网关或代理等待响应超时
 
-#3## GET & POST
+### GET & POST
 
 - GET 通过 url 传递、POST 放在主体中
 - GET 有长度限制(浏览器做的限制)、POST 没有
@@ -863,7 +877,32 @@ const Counter = forwardRef((props, ref) => {
   - Seal 阶段，遍历 ModuleGraph 标记模块导出变量有没有被使用。
   - 生成产物时，若变量没有被其他模块使用时则删除对应的导出语句。
 
+### babel
 
+>  babel 一开始是用来将 es6 的语法转换成 es5 而生的
+
+#### 原理
+
+分为 3 个步骤：
+
+1. 语法分析 parse：babel使用 babylon 将原始代码转换为抽象语法树 AST
+2. 转译 transform：babel 通过 babel-traverse 对前面的抽象语法树进行遍历修改并获得新的抽象语法树
+3. 构建 generator：babel使用 babel-generator 将抽象语法树转换为代码
+
+这三个操作通过babel-core合成一个对外的api供外界使用
+
+### 代码插桩
+
+代码插桩的目的在于采集当前测试对于代码的覆盖率
+
+插桩分为编译时插桩与运行时插桩：
+
+- 编译时：在代码编译/转译过程中插入覆盖率采集代码，比如 babel-plugin-istanbul
+- 运行时：运行时通过hook的方式在使用的代码中插入覆盖率采集代码，比如 hookRequire
+
+#### babel-plugin-istanbul 原理
+
+istanbul 提供的 babel 插件 , 能够在代码编译打包阶段直接植入插桩代码
 
 ## Native
 
