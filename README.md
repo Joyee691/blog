@@ -13,6 +13,7 @@
 - [JS 的模块化之路](./articles/Javascript/Path_to_js_modularity.md)
 - [实现自己的 Promise.all](./articles/Javascript/Promise_all.md)
 - [实现自己的 sleep 与 retry](./articles/Javascript/sleep&retry.md)
+- [实现最大并发任务控制器 Scheduler](./articles/Javascript/Scheduler)
 
 ## Typescript 相关
 
