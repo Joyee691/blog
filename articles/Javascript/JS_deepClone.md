@@ -70,35 +70,71 @@ original.d.referenceToE = original.e;
 original.e.referenceToD = original.d;
 ```
 
-那么我们只需要多给我们的方法一个参数，用来记录已经拷贝过的对象拷贝前后的引用就好，我们选择 Map：
+那么我们只需要多给我们的方法一个参数，用来记录已经拷贝过的对象拷贝前后的引用就好，我们选择 Map
+
+在这里我们顺便把之前没考虑的 Map, Set, RegExp, Date 类型也一起加上了：
 
 ```js
-function deepClone(obj, seen = new Map()) {
-  if (obj === null || typeof obj !== 'object') {
-    return obj;
+function deepClone(data, seen = new Map()) {
+  if (data === null || typeof data !== 'object') {
+    return data;
   }
 
   // 如果当前的对象是之前复制过的，直接把之前复制完的引用返回就好
-  if (seen.has(obj)) {
-    return seen.get(obj);
+  if (seen.has(data)) {
+    return seen.get(data);
   }
 
-  if (Array.isArray(obj)) {
+  // Array
+  if (Array.isArray(data)) {
     const newArr = [];
     // 记得要记录一下新旧值的对应关系
-    seen.set(obj, newArr);
-    for (let i = 0; i < obj.length; i++) {
-      newArr[i] = deepCopy(obj[i], seen);
+    seen.set(data, newArr);
+    for (let i = 0; i < data.length; i++) {
+      newArr[i] = deepClone(data[i], seen);
     }
     return newArr;
   }
 
+  // Date
+  if (data instanceof Date) {
+    return new Date(data.getTime());
+  }
+
+  // RegExp
+  if (data instanceof RegExp) {
+    return new RegExp(data)
+  }
+
+  // Set
+  if (data instanceof Set) {
+    const newSet = new Set()
+    // 记得要记录一下新旧值的对应关系
+    seen.set(data, newSet);
+    data.forEach(item => {
+      newSet.add(deepClone(item, seen))
+    })
+    return newSet
+  }
+
+  // Map
+  if (data instanceof Map) {
+    const newMap = new Map()
+    // 记得要记录一下新旧值的对应关系
+    seen.set(data, newMap);
+    data.forEach((value, key) => {
+      newMap.set(key, deepClone(value, seen))
+    })
+    return newMap
+  }
+
+  // Object
   const newObj = {};
   // 记得要记录一下新旧值的对应关系
-  seen.set(obj, newObj);
-  for (let key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      newObj[key] = deepCopy(obj[key], seen);
+  seen.set(data, newObj);
+  for (let key in data) {
+    if (data.hasOwnProperty(key)) {
+      newObj[key] = deepClone(data[key], seen);
     }
   }
   return newObj;

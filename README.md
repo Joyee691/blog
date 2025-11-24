@@ -14,6 +14,8 @@
 - [实现自己的 Promise.all](./articles/Javascript/Promise_all.md)
 - [实现自己的 sleep 与 retry](./articles/Javascript/sleep&retry.md)
 - [实现最大并发任务控制器 Scheduler](./articles/Javascript/Scheduler)
+- [JS 中的深拷贝](./articles/Javascript/JS_deepClone.md)
+- [使用 JS 实现并发数量控制](./articles/Javascript/Concurrent_control.md)
 
 ## Typescript 相关
 
@@ -25,8 +27,6 @@
 ## 算法相关
 
 - [并查集 Disjoint Set](./articles/Algorithm/并查集Disjoint_Set.md)
-- [JS 中的深拷贝](./articles/Algorithm/JS_deepClone.md)
-- [使用 JS 实现并发数量控制](./articles/Algorithm/Concurrent_control.md)
 - [OT 算法](./articles/Algorithm/Operational_transformation.md)
 
 ## React 相关
