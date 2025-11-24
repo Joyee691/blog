@@ -11,6 +11,8 @@
 - [Javascript 中的柯里化（Currying）](./articles/Javascript/Currying_in_JS.md)
 - [深入 ES6 的块级作用域与声明提升](./articles/Javascript/深入ES6的块级作用域与声明提升.md)
 - [JS 的模块化之路](./articles/Javascript/Path_to_js_modularity.md)
+- [实现自己的 Promise.all](./articles/Javascript/Promise_all.md)
+- [实现自己的 sleep 与 retry](./articles/Javascript/sleep&retry.md)
 
 ## Typescript 相关
 
@@ -24,7 +26,6 @@
 - [并查集 Disjoint Set](./articles/Algorithm/并查集Disjoint_Set.md)
 - [JS 中的深拷贝](./articles/Algorithm/JS_deepClone.md)
 - [使用 JS 实现并发数量控制](./articles/Algorithm/Concurrent_control.md)
-- [实现自己的 Promise.all](./articles/Algorithm/Promise_all.md)
 - [OT 算法](./articles/Algorithm/Operational_transformation.md)
 
 ## React 相关
