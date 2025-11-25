@@ -27,7 +27,7 @@ mdn 对此的解释是：**The HTTP cache stores a response associated with a re
 - Private caches：也是我们常说的浏览器缓存，因为是保存在浏览器，所以这个缓存一般保存的是与特定用户相关的响应，这样才能保证用户相关的信息不会被泄漏出去，一般用户相关的数据会使用 `Cache-Control: private` 这个 header 来保证只在浏览器中缓存
 - Shared caches：指的是浏览器到 server 之间的缓存，可以是代理缓存，也可以是 cdn 缓存，这类缓存是不区分用户的，所以可以在不同的用户之中共享
 
-![type of cache](https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching/type-of-cache.png)
+![type of cache](https://mdn.github.io/shared-assets/images/diagrams/http/cache/type-of-cache.svg)
 
 ## 缓存的状态
 
@@ -148,7 +148,7 @@ Cache-Control: max-age=3600
 
 当然，这个方案仍然使用了时间格式，所以仍然会有一些与上述 Expires 类似的坑：
 
-1. 时间格式能够表达的最小时间间隔是秒，如果有些资源在同一秒之间更新了多次，这套方案无法及时修正
+1. **时间格式能够表达的最小时间间隔是秒**，如果有些资源在同一秒之间更新了多次，这套方案无法及时修正
 2. 如果资源保存在分布式服务器中，服务器的时间同步问题可能导致一些意想不到的 bug
 
 所以就有如下的 ETag 方案……
@@ -263,6 +263,23 @@ no-cache 可以保证用户时刻拿到最新的资源
 其次，no-store 带来的优势完全可以有别的方案来替代
 
 所以如果一般情况下，不建议使用 **no-store**
+
+## Cache-Control 常见指令
+
+### 缓存时长类
+
+- max-age=xxx：资源在 xxx 秒内被视为 fresh，不需要向服务器发请求
+- S-maxage=xxx：和 max-age 类似，但只针对 **共享缓存（CDN、代理）**
+
+### 缓存策略类
+
+- no-cache：仍然允许缓存，但 **每次必须向服务器验证**（协商缓存）
+- no-store：不允许缓存任何内容（既不能写入 memory cache，也不能写入 disk cache）
+
+### 缓存可见性类
+
+- public：允许 **浏览器缓存 + 共享缓存（CDN）** 存储该资源
+- private：只能存储在 **私有缓存（浏览器）**，CDN 和代理不可缓存
 
 ## 资源更新
 

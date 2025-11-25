@@ -48,6 +48,14 @@
 
 ### 闭包是什么
 
+定义：
+
+**闭包是指一个函数在其词法作用域之外执行时，仍然能访问该作用域中的变量。**
+
+产生原因：
+
+**JS 使用词法作用域，作用域在函数定义时确定；当内部函数引用了外部变量并在作用域外继续被引用时，外部作用域就无法被回收，从而形成闭包。**
+
 例子：
 
 ```js
@@ -69,10 +77,10 @@ closure();  // Hi! joyee
 
 - 可以读取其他函数内部变量的函数，等于变相封装局部变量
   - 优点：保护变量、实现模块化封装
-  - 缺点：性能损耗（闭包涉及较长的作用域链查找）
+  - 缺点：**性能损耗**（闭包涉及较长的作用域链查找）
 - 闭包子函数在调用时父函数不会被回收
   - 优点：延长变量生命周期、保持变量状态
-  - 缺点：内存占用
+  - 缺点：**内存占用**、**状态共享**（多个闭包共享同一个外层变量，可能产生错误行为）
 
 ### 常见导致 JS 内存泄漏的行为
 
@@ -91,7 +99,22 @@ closure();  // Hi! joyee
 
 ### JS 的原型链 prototype 是什么
 
-https://developer.mozilla.org/zh-CN/docs/Learn/JavaScript/Objects/Object_prototypes
+1. 从 JS 引擎的视角来看，每一个对象都有一个 **[[prototype]]** 的内部槽 internal slot（浏览器早期添加了`__proto__` 指向对象的 [[prototype]]，但现在废弃了），它是一个指针，指向当前对象继承的对象
+2. 原型 prototype 决定了对象属性的查找路径，当访问对象的变量时，JS 会沿着对象的 **[[prototype]]** 一层层往上找，直到 Object.prototype 为止，这个查找的过程被称之为原型链
+3. 获取/修改对象 **[[prototype]]** 的方式
+
+```js
+// 获取 obj 的 [[prototype]] 指向
+Object.getPrototypeOf(obj)
+
+// 设置 obj 的 [[prototype]] 指向（不建议使用）
+Object.setPrototypeOf(obj, proto)
+
+// 创建带制定 [[prototype]] 的对象
+const obj = Object.create(proto)
+```
+
+
 
 ### 如何编写异步代码
 
@@ -107,8 +130,28 @@ async/await 是 promise 的语法糖
 
 - macro-task：宏任务tasks
 - micro-task：微任务jobs
+- **它们在 Event Loop 中的执行时机不同。微任务永远会在当前宏任务执行完毕后、浏览器进行渲染之前被清空**
 
-script(主程序代码)—>process.nextTick—>Promises...——>setTimeout——>setInterval——>setImmediate——> I/O——>UI rendering
+常见类型：
+
+- **宏任务**：script、setTimeout、setInterval、I/O、MessageChannel
+- **微任务**：Promise.then、MutationObserver、queueMicrotask
+
+Event Loop 执行顺序：
+
+1. 取出一个宏任务执行（如整个 script）
+2. 执行过程中产生的微任务被加入微任务队列
+3. **宏任务执行完后 → 清空所有微任务队列**
+4. 浏览器执行渲染（layout、paint）
+5. 进入下一次事件循环
+
+为什么微任务会阻塞渲染：
+
+- 浏览器必须在渲染前确保当前微任务队列被清空，这是 HTML Standard 明确规定的执行顺序。
+
+- 微任务太多或执行太慢，会导致：
+  - 这一帧的渲染被延迟
+  - 出现卡顿、掉帧、动画不流畅
 
 ### js 的事件流
 
@@ -179,7 +222,20 @@ script(主程序代码)—>process.nextTick—>Promises...——>setTimeout—�
 </body>
 ```
 
-### new 操作符都做了什么事
+### this 相关问题
+
+#### this 是什么
+
+this 是 JS 的一个关键字，表示函数执行时的上下文对象，其值会根据函数的调用方式改变
+
+#### this 的四种绑定规则
+
+1. 默认绑定：函数被独立调用的时候，this 会指向 window
+2. 隐式绑定：如果通过对象调用方法，this 指向该对象（`obj.fn()` 的 this 指向 obj）
+3. 显式绑定：使用 apply，call，bind 可以改变 this 指向
+4. new 绑定：（见下方 new 操作符都做了什么事）
+
+####  new 操作符都做了什么事
 
 1. 创建一个空对象
 2. 继承构造函数的 prototype 与 prototype 的属性
@@ -197,7 +253,7 @@ let newMethod = function (Parent, ...rest) {
 };
 ```
 
-### bind & apply & call
+#### bind & apply & call
 
 用法：
 
@@ -218,6 +274,22 @@ Function.prototype.bind = function (context) {
 }
 ```
 
+#### this 指向的问题
+
+1. 全局对象中的 this 指向：window
+
+2. 全局作用域或者普通函数中的 this：window
+
+3. this 永远指向最后调用它的那个对象：函数的 this 是运行时决定的
+
+4. new 关键词：改变了this的指向
+
+5. apply,call,bind：可以改变函数的 this 指向
+
+6. 箭头函数中的 this：箭头函数的 this 指向在定义时决定，指向外层函数（如果没有就是 window）；箭头函数的 this 无法被 call/bind/apply 修改
+
+7. 匿名函数中的 this：永远指向了window,匿名函数的执行环境具有全局性，因此this指向window
+
 ### 节流与防抖
 
 - 节流：规定相同事件在一段时间内最多只能触发一次事件handle
@@ -227,22 +299,6 @@ Function.prototype.bind = function (context) {
 
 - 对于基本类型：会传递值，形参是实参的一个拷贝
 - 对于复杂类型：会传递该类型的地址值，虽然会是一个新的，但是对于地址引用的修改会反映到实参本身
-
-### this 指向的问题
-
-1. 全局对象中的this指向：window
-
-2. 全局作用域或者普通函数中的this：window
-
-3. this 永远指向最后调用它的那个对象：函数的 this 是运行时决定的
-
-4. new 关键词：改变了this的指向
-
-5. apply,call,bind：可以改变函数的 this 指向
-
-6. 箭头函数中的 this：箭头函数的 this 指向在定义时决定，指向外层函数（如果没有就是 window）
-
-7. 匿名函数中的 this：永远指向了window,匿名函数的执行环境具有全局性，因此this指向window
 
 ### TS 的逆变/协变
 
@@ -493,6 +549,42 @@ token：验证身份的令牌，一般就是用户通过账号密码登录后，
 
 ![](https://atts.w3cschool.cn/attachments/image/20220926/1664174464710051.png)
 
+渲染步骤包括**样式**、**布局**、**绘制**，在某些情况下还包括**合成**
+
+不论在哪一步开始，都需要把后面的步骤再走一次
+
+#### 样式
+
+目标：将 **DOM 树**和 **CSS 规则树**组合成**渲染树**
+
+渲染树的构建从 DOM 树的根开始，遍历每个**可见节点**
+
+#### 布局 [Layout](https://developer.mozilla.org/en-US/docs/Web/Performance/Guides/How_browsers_work#layout) 
+
+目标：在渲染树上运行布局以计算每个节点的几何体
+
+布局 Layout 是确定呈现树中**所有节点的尺寸和位置**，以及确定页面上**每个对象的大小和位置**的过程
+
+第一次确定每个节点的大小和位置称为**布局**。随后对节点大小和位置的重新计算称为**重排 reflow**
+
+#### 绘制 [Paint](https://developer.mozilla.org/en-US/docs/Web/Performance/Guides/How_browsers_work#paint)
+
+目标：将各个节点绘制到屏幕上
+
+在绘制或光栅化阶段，浏览器将在布局阶段计算的每个盒子转换为屏幕上的**实际像素**
+
+绘制涉及将元素的每个可见部分绘制到屏幕上，包括**文本**、**颜色**、**边框**、**阴影**以及**按钮**和**图像**等替换元素
+
+重新对以上元素进行绘制称之为**重绘 repaint**
+
+#### 合成 [Compositing](https://developer.mozilla.org/en-US/docs/Web/Performance/Guides/How_browsers_work#compositing)
+
+目标：当**文档的各个部分以不同的层绘制，相互重叠时**，必须进行合成，以确保它们以正确的顺序绘制到屏幕上，并正确显示内容
+
+
+
+
+
 ## React
 
 ### useEffect 与 useLayoutEffect
@@ -734,9 +826,7 @@ const Counter = forwardRef((props, ref) => {
 
 #### HTTP 缓存
 
-- 强缓存：直接从副本比对，不请求server，返回200
-
-- 协商缓存：与server比对，如果相同请求副本，返回304 资源未修改
+详情见 [HTTP 缓存](./HTTP_Cache.md)
 
 ### TCP协议
 
