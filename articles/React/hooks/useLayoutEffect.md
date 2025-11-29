@@ -18,7 +18,7 @@ useLayoutEffect(effect: EffectCallback, deps?: DependencyList)
 
 ## useLayoutEffect 与 useEffect 区别
 
-- useLayoutEffect 的执行时机在渲染函数执行完成后，屏幕绘制前**同步执行**，与 componentDidMount 和 componentDidUpdate 保持一致
+- useLayoutEffect 的执行时机在渲染函数执行完成后，屏幕绘制 paint 前**同步执行**，与 componentDidMount 和 componentDidUpdate 保持一致
 - useEffect 执行时机则是在屏幕绘制完成后**异步执行**
 
 下面的例子展示了两个方法的执行顺序：

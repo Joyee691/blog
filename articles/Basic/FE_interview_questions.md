@@ -167,7 +167,7 @@ Event Loop 执行顺序：
 
 ### 事件流的应用——事件委托 event delegation
 
-一句话描述：事件委托将本来要绑定在子元素的事件响应函数委托给父元素处理，以简化初始化过程与减少内存占用
+一句话描述：事件委托将本来要绑定在子元素的事件响应函数委托给父元素处理，以简化初始化过程与**减少内存占用**，**动态生成的子节点也适用**
 
 例子：
 
@@ -500,7 +500,14 @@ document.head.appendChild(myScript);
 
 ### 跨域是什么？怎么避免
 
-跨域是指浏览器允许向服务器发送跨域请求，为什么有这个跨域，主要是同源策略。同源策略是浏览器的一个核心的安全策略，主要指"协议+域名+端口”三种需要相同，不同的话会被限制发请求、cookie 、localstorage 、dom等也无法读取
+**当两个 URL 的协议、域名或端口任一不同，即为跨域**
+
+跨域是指浏览器由于**同源策略**，会限制跨域请求的**结果访问**
+
+同源策略的目的：
+
+- 防止恶意网站读取用户个人信息：Cookie，LocalStorage
+- 防止未授权操作：伪造请求
 
 跨域方式
 
@@ -516,11 +523,11 @@ document.head.appendChild(myScript);
 - 请求方式 head get post
 - header 头 content-type限于 application/x-www-form-urlencoded、multipart/form-data、text/plain
 
-简单请求里会新增加一个 Origin 字段。需要传递你接口的源的信息，后端判断是否同意这次请求，对应的相应头里也会返回 Access-Control 开头的字段，Access-Control-Allow-Origin。Allow-Credentials，默认是不带 cookie，如果需要带设置成 true
+简单请求里会新增加一个 **Origin** 字段。需要传递你接口的源的信息，后端判断是否同意这次请求，对应的相应头里也会返回 Access-Control 开头的字段，Access-Control-Allow-Origin。Allow-Credentials，默认是不带 cookie，如果需要带设置成 true
 
 <br />
 
-不是简单请求，会多发一个预请求，预检"请求用的请求方法是 **OPTIONS**，表示这个请求是用来询问的。请求头信息里面，关键字段是 Origin，表示请求来自哪个源。除了 Origin 字段，预检请求的头信息包括两个特殊字段：
+不是简单请求，会**多发一个预请求**，预检请求用的请求方法是 **OPTIONS**，表示这个请求是用来询问的。请求头信息里面，关键字段是 Origin，表示请求来自哪个源。除了 Origin 字段，预检请求的头信息包括两个特殊字段：
 
 - Access-Control-Request-Method
 - Access-Control-Request-Headers
@@ -955,9 +962,11 @@ const Counter = forwardRef((props, ref) => {
 
 ### tree shaking原理
 
-- ES6 的 import 语法可以完美使用 tree shaking，因为可以在代码不运行的情况下就能分析出不需要的代码。
+- ES6(**ES Module**) 的 import 语法可以完美使用 tree shaking，因为可以在代码不运行的情况下就能分析出不需要的代码。
   - ES6 Module 引入进行静态分析，故而编译的时候正确判断到底加载了那些模块
   - 静态分析程序流，判断那些模块和变量未被使用或者引用，进而删除对应代码
+  - 能够 tree Shaking 的主要原因：**ESM 是静态结构 —— import/export 必须在顶层，不能动态修改**
+  - **CommonJS 是动态的，无法进行可靠的静态分析，因此不能被 tree-shaking**
 - 核心就是去除 dead code
   - 不可达代码
   - 执行结果并用不到
@@ -973,13 +982,15 @@ const Counter = forwardRef((props, ref) => {
 
 #### 原理
 
-分为 3 个步骤：
+Babel 的工作流程分为三个阶段：
 
-1. 语法分析 parse：babel使用 babylon 将原始代码转换为抽象语法树 AST
-2. 转译 transform：babel 通过 babel-traverse 对前面的抽象语法树进行遍历修改并获得新的抽象语法树
-3. 构建 generator：babel使用 babel-generator 将抽象语法树转换为代码
+1. 解析：通过词法分析和语法分析将源代码转换为抽象语法树 AST
+2. 转换：通过 Babel 插件（plugin/preset）访问与修改 AST，将 ES6+ 语法转换为 ES5 语法对应的 AST
+3. 生成：根据转换后的 AST 输出最终代码，同时生成 Source Map
 
-这三个操作通过babel-core合成一个对外的api供外界使用
+AST 是一种标准化、结构化的代码表示，能够让语法转换通过节点访问与替换精准完成。
+
+Babel 能将 ES6 转为 ES5，是因为 AST 格式标准统一，且插件提供了可精确映射的语法转换规则。
 
 ### 代码插桩
 
@@ -994,6 +1005,14 @@ const Counter = forwardRef((props, ref) => {
 
 istanbul 提供的 babel 插件 , 能够在代码编译打包阶段直接植入插桩代码
 
+### Source map
+
+Source Map 是一种用于**将构建后代码映射回原始源码的文件**，方便在生产环境中**定位 bug 和 debug**
+
+它通过**记录构建产物与原始文件的行列信息映射**，使错误堆栈能指向真实源码位置
+
+如果 Source Map 暴露在生产环境，可能导致源代码、业务逻辑乃至安全漏洞被逆向工程利用，因此具有较高的安全风险
+
 ## Native
 
 
@@ -1003,10 +1022,6 @@ istanbul 提供的 babel 插件 , 能够在代码编译打包阶段直接植入�
 
 
 ## Git
-
-
-
-## Algorithm
 
 
 
