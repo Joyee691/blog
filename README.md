@@ -26,6 +26,7 @@
 
 ## 算法相关
 
+- [算法介绍](./articles/Algorithm/Algorithm_practice.md)
 - [并查集 Disjoint Set](./articles/Algorithm/并查集Disjoint_Set.md)
 - [OT 算法](./articles/Algorithm/Operational_transformation.md)
 
