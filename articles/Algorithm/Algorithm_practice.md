@@ -131,6 +131,16 @@ var climbStairs = function (n) {
 };
 ```
 
+# 贪心思想
+
+贪心的核心就是**每一步行动总是按某种指标选取最优的操作**
+
+可想而之，它的缺点就是并非所有情况都能取得最优解
+
+它的适用场景在**有最优子结构的问题**
+
+例子：[121. Best Time to Buy and Sell Stock](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/)
+
 # 数据结构
 
 ## 二叉树
@@ -240,5 +250,81 @@ var layeredTraversal = function (root) {
     }
     return res
 };
+```
+
+## 堆
+
+堆的本质是一颗树
+
+与树的区别在于，堆要求任意节点的值皆大于/小于/等于其父节点的值
+
+**每个节点的键值都大于等于其父亲键值**的堆叫做小顶堆；否则称之为大顶堆
+
+常见的堆，我们称之为二叉堆，其对应的是二叉树
+
+### 堆的实现
+
+```js
+class MyHeap {
+  	// compare 方法决定了这个堆的性质（小顶堆/大顶堆）
+    constructor(compare) {
+        this.heap = []
+        this.compare = compare
+    }
+
+    peek() {
+        return this.heap[0]
+    }
+
+    isEmpty() {
+        return this.heap.length === 0
+    }
+
+    push(item) {
+        this.heap.push(item)
+        this.heapifyUp(this.heap.length - 1)
+    }
+
+    pop() {
+        if (this.heap.length <= 1) {
+            return this.heap.pop()
+        }
+
+        const res = this.heap[0]
+        this.heap[0] = this.heap.pop()
+        this.heapifyDown(0)
+        return res
+    }
+
+    heapifyUp(index) {
+        let parent = (index - 1) >> 1
+
+        if (parent >= 0 && this.compare(this.heap[index], this.heap[parent]) < 0) {
+            // let temp = this.heap[index]
+            // this.heap[index] = this.heap[parent]
+            // this.heap[parent] = temp
+            [this.heap[index], this.heap[parent]] = [this.heap[parent], this.heap[index]]
+            this.heapifyUp(parent)
+        }
+    }
+
+    heapifyDown(index) {
+        const left = index * 2 + 1
+        const right = index * 2 + 2
+        let competitive = index
+
+        if (left < this.heap.length && this.compare(this.heap[left], this.heap[competitive]) < 0) {
+            competitive = left
+        }
+        if (right < this.heap.length && this.compare(this.heap[right], this.heap[competitive]) < 0) {
+            competitive = right
+        }
+
+        if (competitive !== index) {
+            [this.heap[competitive], this.heap[index]] = [this.heap[index], this.heap[competitive]]
+            this.heapifyDown(competitive)
+        }
+    }
+}
 ```
 
